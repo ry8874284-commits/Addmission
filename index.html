@@ -289,10 +289,9 @@
             <button class="btn print-btn" onclick="window.print()">PRINT RECEIPT</button>
         </div>
     </div>
-
-   <script>
-  // ⚠️ यहाँ अपना जनरेट किया हुआ Google Apps Script Web App URL ही रहने दें
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbxhHX-9ihuPZNDobZAuWXsSh8UqPynf_eooh4rb437gR8Sskym71rMqytDpmSpa-_0O/exec'; 
+    <script>
+  // ⚠️ यहाँ अपना जनरेट किया हुआ नया Google Apps Script Web App URL पेस्ट करें
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbxi7-SlTkPAzBQDsK7Fs5GdSqsuM7-hESwOX_jPJw4fDIs6FS9F0gPY_OiEwty1_0oG/exec'; 
 
   document.getElementById('admissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -300,72 +299,73 @@
     submitBtn.innerText = "PROCESSING APPLICATION...";
     submitBtn.disabled = true;
 
-    const fileInput = document.getElementById('photo');
-    const file = fileInput.files[0]; // [0] लगाना ज़रूरी है ताकि पहली फाइल सेलेक्ट हो
-    
-    if (!file) {
-        alert("कृपया एक पासपोर्ट फोटो अपलोड करें।");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Submit Admission Form";
-        return;
-    }
+    // फॉर्म से सभी वैल्यू निकालना
+    const sName = document.getElementById('name').value;
+    const fName = document.getElementById('fatherName').value;
+    const sPhone = document.getElementById('phone').value;
+    const sClass = document.getElementById('studentClass').value;
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
+    const fileInput = document.getElementById('photo');
+    
+    // डेटा भेजने का मुख्य फंक्शन
+    function sendData(photoDataStr, photoNameStr) {
       const formData = {
-        name: document.getElementById('name').value,
-        fatherName: document.getElementById('fatherName').value,
-        phone: document.getElementById('phone').value,
-        course: document.getElementById('studentClass').value,
-        photoData: reader.result,
-        photoName: file.name
+        name: sName,
+        fatherName: fName,
+        phone: sPhone,
+        course: sClass,
+        photoData: photoDataStr || "",
+        photoName: photoNameStr || ""
       };
 
-      // 🔗 डेटा भेजने का सही और नया तरीका (बिना no-cors के ताकी एरर न आये)
       fetch(scriptURL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Google Apps Script के लिए सबसे बेस्ट हेडर
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(formData)
       })
-      .then(response => response.json())
-      .then(res => {
-        if(res.result === "success") {
-            // फॉर्म छुपाएं और रसीद दिखाएं
-            document.getElementById('formSection').style.display = 'none';
-            document.getElementById('receiptSection').style.display = 'block';
-            
-            // रसीद में स्टूडेंट का डेटा ऑटो-फ़िल करें
-            document.getElementById('rName').innerText = formData.name.toUpperCase();
-            document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
-            document.getElementById('rPhone').innerText = formData.phone;
-            document.getElementById('rClass').innerText = formData.course;
-            document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
-            document.getElementById('rPhoto').src = formData.photoData;
-        } else {
-            alert('सर्वर एरर: ' + res.error);
-        }
-      })
-      .catch(error => {
-        // कई बार Google Sheet में डेटा सेव हो जाता है पर ब्राउज़र ब्लॉक कर देता है, इसे बाईपास करने के लिए:
+      .then(() => {
+        // फॉर्म छुपाएं और रसीद दिखाएं
         document.getElementById('formSection').style.display = 'none';
         document.getElementById('receiptSection').style.display = 'block';
         
+        // रसीद में स्टूडेंट का डेटा भरें
         document.getElementById('rName').innerText = formData.name.toUpperCase();
         document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
         document.getElementById('rPhone').innerText = formData.phone;
         document.getElementById('rClass').innerText = formData.course;
         document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
-        document.getElementById('rPhoto').src = formData.photoData;
-        
-        console.log('डेटा भेज दिया गया है, कृपया शीट चेक करें।');
+        if(photoDataStr) {
+            document.getElementById('rPhoto').src = photoDataStr;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('कुछ गड़बड़ हुई, कृपया दोबारा प्रयास करें।');
       })
       .finally(() => {
         submitBtn.innerText = "Submit Admission Form";
         submitBtn.disabled = false;
       });
-    };
+    }
+
+    // जांचें कि क्या यूजर ने फोटो चुनी है
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        sendData(reader.result, file.name);
+      };
+      reader.onerror = function() {
+        // अगर फोटो रीड करने में एरर आये तो बिना फोटो के ही डेटा भेज दो
+        sendData("", "");
+      };
+    } else {
+      // अगर फोटो सेलेक्ट नहीं है (सुरक्षा के लिए)
+      sendData("", "");
+    }
   });
 </script>
 
-</html>
+
+  
