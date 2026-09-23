@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sun shine coaching academy - Online Admission</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f0f4f8;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* यूनिवर्सिटी स्टाइल कंटेनर */
+        .portal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-top: 8px solid #003366;
+            overflow: hidden;
+            padding: 35px;
+        }
+
+        /* एकेडमिक हेडर */
+        .academy-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .academy-header h1 {
+            color: #003366;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .academy-header p {
+            color: #555;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .portal-title {
+            text-align: center;
+            font-size: 18px;
+            color: #2d3748;
+            font-weight: bold;
+            margin-bottom: 25px;
+            background: #edf2f7;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        /* फॉर्म ग्रिड लेआउट */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 500px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            padding: 11px 14px;
+            border: 1.5px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 15px;
+            color: #2d3748;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #003366;
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.15);
+        }
+
+        /* बटन स्टाइल्स */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #003366;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background: #002244;
+        }
+
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+
+        .print-btn {
+            background: #2b6cb0;
+            margin-top: 20px;
+        }
+
+        .print-btn:hover {
+            background: #2c5282;
+        }
+
+        /* रसीद (Receipt) डिज़ाइन */
+        .receipt-card {
+            display: none;
+            border: 2px solid #003366;
+            border-radius: 8px;
+            padding: 25px;
+            background: #fff;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #003366;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 15px;
+        }
+
+        .receipt-row span:first-child {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .student-photo {
+            width: 110px;
+            height: 130px;
+            object-fit: cover;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+
+        /* यूनिवर्सिटी की तरह प्रिंट सेटिंग */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .portal-box {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            #formSection,
+            .print-btn {
+                display: none !important;
+            }
+
+            #receiptSection {
+                display: block !important;
+                border: none;
+            }
+
+            .receipt-header {
+                border-bottom: 2px solid #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="portal-box">
+        <!-- कोचिंग ब्रांडिंग हेडर -->
+        <div class="academy-header">
+            <h1>Sun shine coaching academy</h1>
+            <p>Gama Prasad Kotwalpur | Helpline: +91 9670570609</p>
+            <p style="color: #718096; font-size: 12px; margin-top: 2px;">CBSE Curriculum (Classes 1st to 8th)</p>
+        </div>
+
+        <!-- भाग 1: ऑनलाइन एडमिशन फॉर्म -->
+        <div id="formSection">
+            <div class="portal-title">ONLINE ADMISSION PORTAL - 2026</div>
+            <form id="admissionForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>विद्यार्थी का नाम (Student Name) *</label>
+                        <input type="text" id="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>पिता का नाम (Father's Name) *</label>
+                        <input type="text" id="fatherName" required placeholder="Enter father's name">
+                    </div>
+                    <div class="form-group">
+                        <label>मोबाइल नंबर (Mobile No.) *</label>
+                        <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="10-digit number">
+                    </div>
+                    <div class="form-group">
+                        <label>प्रवेश कक्षा (Admission Class) *</label>
+                        <select id="studentClass" required>
+                            <option value="">-- Select Class --</option>
+                            <option value="Class 1">Class 1st</option>
+                            <option value="Class 2">Class 2nd</option>
+                            <option value="Class 3">Class 3rd</option>
+                            <option value="Class 4">Class 4th</option>
+                            <option value="Class 5">Class 5th</option>
+                            <option value="Class 6">Class 6th</option>
+                            <option value="Class 7">Class 7th</option>
+                            <option value="Class 8">Class 8th</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>पासपोर्ट फोटो अपलोड करें (Upload Photo) *</label>
+                        <input type="file" id="photo" accept="image/*" required>
+                    </div>
+                </div>
+                <button type="submit" id="submitBtn" class="btn">SUBMIT APPLICATION</button>
+            </form>
+        </div>
+
+        <!-- भाग 2: यूनिवर्सिटी स्टाइल एडमिशन रसीद -->
+        <div id="receiptSection" class="receipt-card">
+            <div class="receipt-header">
+                <h2 style="color: #003366; font-size: 20px;">ADMISSION ACKNOWLEDGEMENT</h2>
+                <p style="color: #4a5568; font-size: 13px; margin-top: 3px;">Academic Session 2026-2027</p>
+            </div>
+            <img id="rPhoto" class="student-photo" src="" alt="Student">
+            <div class="receipt-row"><span>Student Name:</span> <span id="rName"></span></div>
+            <div class="receipt-row"><span>Father's Name:</span> <span id="rFatherName"></span></div>
+            <div class="receipt-row"><span>Mobile Number:</span> <span id="rPhone"></span></div>
+            <div class="receipt-row"><span>Class Allotted:</span> <span id="rClass"
+                    style="font-weight: bold; color: #003366;"></span></div>
+            <div class="receipt-row"><span>Status:</span> <span style="color: #2f855a; font-weight: bold;">PROVISIONAL
+                    ADMITTED</span></div>
+            <div class="receipt-row"><span>Date & Time:</span> <span id="rDate"></span></div>
+
+            <button class="btn print-btn" onclick="window.print()">PRINT RECEIPT</button>
+        </div>
+    </div>
+
+    <script>
+        // यहाँ अपना जनरेट किया हुआ Google Apps Script Web App URL डालें
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz1zOnFvXLzv2jfkPZs3LWIgk2R8ED97D8OgzqAHAerEgwbJs8JDPQKnrr-iGkPi0IS/exec';
+
+        document.getElementById('admissionForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "PROCESSING APPLICATION...";
+            submitBtn.disabled = true;
+
+            const fileInput = document.getElementById('photo');
+            const file = fileInput.files[0];
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                const formData = {
+                    name: document.getElementById('name').value,
+                    fatherName: document.getElementById('fatherName').value,
+                    phone: document.getElementById('phone').value,
+                    course: document.getElementById('studentClass').value, // स्क्रिप्ट में 'course' कॉलम ही क्लास रिकॉर्ड करेगा
+                    photoData: reader.result,
+                    photoName: file.name
+                };
+
+                fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                    .then(() => {
+                        // फॉर्म छुपाएं और रसीद दिखाएं
+                        document.getElementById('formSection').style.display = 'none';
+                        document.getElementById('receiptSection').style.display = 'block';
+
+                        // रसीद में स्टूडेंट का डेटा डालें
+                        document.getElementById('rName').innerText = formData.name.toUpperCase();
+                        document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
+                        document.getElementById('rPhone').innerText = formData.phone;
+                        document.getElementById('rClass').innerText = formData.course;
+                        document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
+                        document.getElementById('rPhoto').src = formData.photoData;
+                    })
+                    .catch(error => alert('Submission Error: ' + error.message))
+                    .finally(() => {
+                        submitBtn.innerText = "SUBMIT APPLICATION";
+                        submitBtn.disabled = false;
+                    });
+            };
+        });
+    </script>
+
+</body>
+
+</html>
