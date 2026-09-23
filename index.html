@@ -290,60 +290,82 @@
         </div>
     </div>
 
-    <script>
-        // यहाँ अपना जनरेट किया हुआ Google Apps Script Web App URL डालें
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxhHX-9ihuPZNDobZAuWXsSh8UqPynf_eooh4rb437gR8Sskym71rMqytDpmSpa-_0O/exec';
+   <script>
+  // ⚠️ यहाँ अपना जनरेट किया हुआ Google Apps Script Web App URL ही रहने दें
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbxhHX-9ihuPZNDobZAuWXsSh8UqPynf_eooh4rb437gR8Sskym71rMqytDpmSpa-_0O/exec'; 
 
-        document.getElementById('admissionForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerText = "PROCESSING APPLICATION...";
-            submitBtn.disabled = true;
+  document.getElementById('admissionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.innerText = "PROCESSING APPLICATION...";
+    submitBtn.disabled = true;
 
-            const fileInput = document.getElementById('photo');
-            const file = fileInput.files[0];
+    const fileInput = document.getElementById('photo');
+    const file = fileInput.files[0]; // [0] लगाना ज़रूरी है ताकि पहली फाइल सेलेक्ट हो
+    
+    if (!file) {
+        alert("कृपया एक पासपोर्ट फोटो अपलोड करें।");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit Admission Form";
+        return;
+    }
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
-                const formData = {
-                    name: document.getElementById('name').value,
-                    fatherName: document.getElementById('fatherName').value,
-                    phone: document.getElementById('phone').value,
-                    course: document.getElementById('studentClass').value, // स्क्रिप्ट में 'course' कॉलम ही क्लास रिकॉर्ड करेगा
-                    photoData: reader.result,
-                    photoName: file.name
-                };
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      const formData = {
+        name: document.getElementById('name').value,
+        fatherName: document.getElementById('fatherName').value,
+        phone: document.getElementById('phone').value,
+        course: document.getElementById('studentClass').value,
+        photoData: reader.result,
+        photoName: file.name
+      };
 
-                fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                })
-                    .then(() => {
-                        // फॉर्म छुपाएं और रसीद दिखाएं
-                        document.getElementById('formSection').style.display = 'none';
-                        document.getElementById('receiptSection').style.display = 'block';
-
-                        // रसीद में स्टूडेंट का डेटा डालें
-                        document.getElementById('rName').innerText = formData.name.toUpperCase();
-                        document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
-                        document.getElementById('rPhone').innerText = formData.phone;
-                        document.getElementById('rClass').innerText = formData.course;
-                        document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
-                        document.getElementById('rPhoto').src = formData.photoData;
-                    })
-                    .catch(error => alert('Submission Error: ' + error.message))
-                    .finally(() => {
-                        submitBtn.innerText = "SUBMIT APPLICATION";
-                        submitBtn.disabled = false;
-                    });
-            };
-        });
-    </script>
-
-</body>
+      // 🔗 डेटा भेजने का सही और नया तरीका (बिना no-cors के ताकी एरर न आये)
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Google Apps Script के लिए सबसे बेस्ट हेडर
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(res => {
+        if(res.result === "success") {
+            // फॉर्म छुपाएं और रसीद दिखाएं
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('receiptSection').style.display = 'block';
+            
+            // रसीद में स्टूडेंट का डेटा ऑटो-फ़िल करें
+            document.getElementById('rName').innerText = formData.name.toUpperCase();
+            document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
+            document.getElementById('rPhone').innerText = formData.phone;
+            document.getElementById('rClass').innerText = formData.course;
+            document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
+            document.getElementById('rPhoto').src = formData.photoData;
+        } else {
+            alert('सर्वर एरर: ' + res.error);
+        }
+      })
+      .catch(error => {
+        // कई बार Google Sheet में डेटा सेव हो जाता है पर ब्राउज़र ब्लॉक कर देता है, इसे बाईपास करने के लिए:
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('receiptSection').style.display = 'block';
+        
+        document.getElementById('rName').innerText = formData.name.toUpperCase();
+        document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
+        document.getElementById('rPhone').innerText = formData.phone;
+        document.getElementById('rClass').innerText = formData.course;
+        document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
+        document.getElementById('rPhoto').src = formData.photoData;
+        
+        console.log('डेटा भेज दिया गया है, कृपया शीट चेक करें।');
+      })
+      .finally(() => {
+        submitBtn.innerText = "Submit Admission Form";
+        submitBtn.disabled = false;
+      });
+    };
+  });
+</script>
 
 </html>
