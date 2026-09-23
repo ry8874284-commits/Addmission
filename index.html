@@ -333,10 +333,8 @@
         document.getElementById('rFatherName').innerText = formData.fatherName.toUpperCase();
         document.getElementById('rPhone').innerText = formData.phone;
         document.getElementById('rClass').innerText = formData.course;
-        document.getElementById('rDate').innerText = new Date().toLocaleString('en-IN');
-        if(photoDataStr) {
-            document.getElementById('rPhoto').src = photoDataStr;
-        }
+      
+       
       })
       .catch(error => {
         console.error('Error:', error);
